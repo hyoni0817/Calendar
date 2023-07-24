@@ -6,13 +6,11 @@ const Calendar = () => {
     const lastDayOfTheMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
     const currentYear = Number(date.getFullYear());
     const currentMonth = Number(date.getMonth());
+    const currentDate = Number(date.getDate());
+    const startDay = new Date(currentYear, currentMonth, 1).getDay(); // 1일에 해당하는 요일 
+    const endDay = new Date(currentYear, currentMonth, lastDayOfTheMonth[currentMonth]).getDay();
     const numOfWeek = Math.floor(lastDayOfTheMonth[currentMonth] / 7) + (new Date(currentYear, currentMonth, 1).getDay() > 4 ? 2 : 1); // 1일이 금요일부터 시작되면 한 주를 더 해준다.
-    // 25, 26, 27, 28, 19, 30, 1
-    // 2, 3, 4, 5, 6, 7, 8
-    // 9, 10, 11, 12, 13, 14, 15,
-    // 16, 17, 18, 19, 20, 21, 22,
-    // 23, 24, 25, 26, 27, 28, 29,
-    // 30, 31, 1, 2, 3, 4, 5
+
     return (
         <div>
             <h1>{currentMonth+1}월</h1>
@@ -24,28 +22,19 @@ const Calendar = () => {
                 </thead>
                 <tbody>
                     {
-                        React.Children.toArray(Array(numOfWeek).fill('').map((num, idx) => <tr>
-                        <td>
-                            1
-                        </td>
-                        <td>
-                            2
-                        </td>
-                        <td>
-                            3
-                        </td>
-                        <td>
-                            4
-                        </td>
-                        <td>
-                            5
-                        </td>
-                        <td>
-                            6
-                        </td>
-                        <td>
-                            7
-                        </td>
+                        React.Children.toArray(Array(numOfWeek).fill('').map((num, weekIdx) => <tr>
+                            {React.Children.toArray(Array(7).fill('').map((num, dateIdx) => {
+                                const dateValue = (weekIdx * 7 - startDay) + (dateIdx + 1);
+                                if (dateValue > 0 && dateValue <= lastDayOfTheMonth[currentMonth]) {
+                                    return <td>{dateValue}</td>
+                                }
+                                if (dateValue <= 0) {
+                                    return <td>-</td>
+                                }
+                                if (dateValue > lastDayOfTheMonth[currentMonth]) {
+                                    return <td>-</td>
+                                }
+                            }))}
                     </tr>))
                     }
                 </tbody>
